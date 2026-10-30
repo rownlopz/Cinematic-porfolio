@@ -7,11 +7,18 @@ const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton
 const grotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-grotesk", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono-face", display: "swap" });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+function getSiteUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  if (!raw.startsWith("http://") && !raw.startsWith("https://")) {
+    return `https://${raw}`;
+  }
+  return raw;
+}
 
 export const viewport: Viewport = { themeColor: "#0a0a0a", width: "device-width", initialScale: 1 };
 
 export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = getSiteUrl();
   const { settings } = await getSiteData();
   const title = settings.seo_title || `${settings.display_name} — Video Editor, Motion Designer & AI Video Creator`;
   const description =
